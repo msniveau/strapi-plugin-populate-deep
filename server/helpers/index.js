@@ -15,9 +15,6 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
   if (maxDepth <= 1) {
     return true;
   }
-  if (modelUid === "admin::user" && skipCreatorFields) {
-    return undefined;
-  }
 
   const populate = {};
   const model = strapi.getModel(modelUid);
@@ -25,6 +22,7 @@ const getFullPopulateObject = (modelUid, maxDepth = 20, ignore) => {
   for (const [key, value] of Object.entries(
     getModelPopulationAttributes(model)
   )) {
+    if (skipCreatorFields && ["createdBy", "updatedBy"].includes(key)) continue
     if (ignore?.includes(key)) continue
     if (value) {
       if (value.type === "component") {
